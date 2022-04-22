@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link id="link_theme" rel="stylesheet" href="" />
+    <link rel="icon" href="assets/imgs/header-footer/logo_imgWHITE.png" />
+
+    <script src="./js/funcoes.js"></script>
+
+    <title>Unidades | OMNI Têxtil</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="container">
+        <a href="index.html" class="href-title">
+          <img
+            src="assets/imgs/header-footer/logo-OMNI_Textil.png"
+            alt="OMNI TÊXTIL"
+          />
+        </a>
+        <!-- ALTERAR A CLASSE EM DETERMINADAS PÁGINAS -->
+        <ul class="navbar-header" id="navbar_cadastro">
+          <li class="page-selected"><a href="unidades.html">Unidades</a></li>
+          <hr />
+          <li class=""><a href="cadastro.html">Cadastro</a></li>
+          <hr />
+          <li class=""><a href="login.html">Sair</a></li>
+          <img
+            id="img_theme"
+            onclick="theme_change()"
+            src="assets/imgs/header-footer/sun_off.png"
+            title="Mudar tema"
+            alt="Sol do Tema"
+          />
+        </ul>
+      </div>
+    </div>
+
+    <!-- BANNER -->
+    <div class="banner banner-unidades">
+      <div class="container">
+        <!-- CARD DE UNIDADES -->
+        <div class="card-input card-unidades">
+          <h1>UNIDADES</h1>
+          <div class="alerta_erro">
+            <div class="card_erro" id="cardErro">
+              <span id="mensagem_erro"></span>
+            </div>
+            <div id="div_erros_login"></div>
+          </div>
+          <div class="form-box form-unidades">
+            <div class="form-input form-select-p">
+              <select class="form-select" id="select_unidades">
+                <option value="0">-</option>
+                <option value="1">Unidade 1</option>
+                <option value="2">Unidade 2</option>
+                <option value="3">Unidade 3</option>
+                <option value="4">Unidade 4</option>
+              </select>
+            </div>
+          </div>
+          <button
+            onclick="carregar_dashboard()"
+            class="form-button form-btn-dashboard"
+            title="Ir para a dashboard"
+          >
+            DASHBOARD
+          </button>
+          <div id="div_aguardar" class="loading-div">
+            <img src="./assets/circle-loading.gif" id="loading-gif" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="dashboard.html"> DASHBOARD </a>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <!-- BOX DE REPORT -->
+        <div class="box reports">
+          <img src="assets/imgs/header-footer/logo_lupa.png" alt="lupa" />
+          <p>
+            Feedbacks<br />
+            Reports
+          </p>
+        </div>
+        <!-- BOX DE CONTATO -->
+        <div class="box contato">
+          <h4>Contato</h4>
+          <hr />
+          <h5>
+            <img
+              src="assets/imgs/header-footer/logo_whats.png"
+              alt="whats"
+            />(011)2534-1484
+          </h5>
+          <h5>
+            <img
+              src="assets/imgs/header-footer/logo_email.png"
+              alt="email"
+            />omnisuport@solution.com
+          </h5>
+        </div>
+        <!-- BOX DA OMNI SOLUTIONS -->
+        <div class="box">
+          <h2>OMNI Solution</h2>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<script src="js/script.js"></script>
+
+<script>
+  function carregar_dashboard() {
+    var unidadeVar = Number(select_unidades.value);
+
+    if (unidadeVar == 0) {
+      cardErro.style.display = "flex";
+      mensagem_erro.innerHTML = "Escolher unidade!";
+      finalizarAguardar();
+      return false;
+    } else {
+      setInterval(sumirMensagem, 5000);
+    }
+
+    console.log("FORM Unidade: ", unidadeVar);
+
+    fetch("/usuarios/autenticar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        unidadeSever: unidadeVar,
+      }),
+    })
+      .then(function (resposta) {
+        console.log("ESTOU NO THEN DO dashboard()!");
+
+        if (resposta.ok) {
+          console.log(resposta);
+
+          resposta.json().then((json) => {
+            console.log(json);
+            console.log(JSON.stringify(json));
+
+            sessionStorage.UNIDADE = json.unidade;
+
+            setTimeout(function () {
+              window.location = "/dashboard.html";
+            }, 1000); // apenas para exibir o loading
+          });
+        } else {
+          console.log("Houve um erro ao tentar acessar a dashboard!");
+
+          resposta.text().then((texto) => {
+            console.error(texto);
+            finalizarAguardar(texto);
+          });
+        }
+      })
+      .catch(function (erro) {
+        console.log(erro);
+      });
+
+    return false;
+  }
+
+  function sumirMensagem() {
+    cardErro.style.display = "none";
+  }
+</script>

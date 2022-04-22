@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link id="link_theme" rel="stylesheet" href="" />
+    <link rel="icon" href="assets/imgs/header-footer/logo_imgWHITE.png" />
+
+    <script src="./js/funcoes.js"></script>
+
+    <title>Login | OMNI Têxtil</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="header">
+      <div class="container">
+        <a href="index.html" class="href-title">
+          <img
+            src="assets/imgs/header-footer/logo-OMNI_Textil.png"
+            alt="OMNI TÊXTIL"
+          />
+        </a>
+        <!-- ALTERAR A CLASSE EM DETERMINADAS PÁGINAS -->
+        <ul class="navbar-header">
+          <li class=""><a href="index.html">Home</a></li>
+          <hr />
+          <li class=""><a href="page_manual.html">Manual</a></li>
+          <hr />
+          <li class=""><a href="page_equipe.html">Equipe</a></li>
+          <hr />
+          <li class=""><a href="simulador_financeiro.html">Simulador</a></li>
+          <hr />
+          <li class="page-selected"><a href="login.html">Login</a></li>
+          <img
+            id="img_theme"
+            onclick="theme_change()"
+            src="assets/imgs/header-footer/sun_off.png"
+            title="Mudar tema"
+            alt="Sol do Tema"
+          />
+        </ul>
+      </div>
+    </header>
+
+    <!-- BANNER -->
+    <div class="banner banner-login">
+      
+      <div class="container">
+        
+        <div class="card-input card-login">
+          <h1>LOGIN</h1>
+          <div class="alerta_erro">
+            <div class="card_erro" id="cardErro">
+              <span id="mensagem_erro"></span>
+            </div>
+            <div id="div_erros_login"></div>
+          </div>
+          <div class="form-box form-login">
+            <div class="form-input">
+              <p>E-mail:</p>
+              <input type="email" id="email_input" spellcheck="false" />
+            </div>
+            <div class="form-input">
+              <p>Senha:</p>
+              <input type="password" id="senha_input" />
+            </div>
+          </div>
+
+          <button onclick="entrar()" class="form-button" title="Entrar">
+            Entrar
+          </button>
+          <div id="div_aguardar" class="loading-div">
+            <img src="./assets/circle-loading.gif" id="loading-gif" />
+          </div>
+         
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <!-- BOX DE REPORT -->
+        <div class="box reports">
+          <img src="assets/imgs/header-footer/logo_lupa.png" alt="lupa" />
+          <p>
+            Feedbacks<br />
+            Reports
+          </p>
+        </div>
+        <!-- BOX DE CONTATO -->
+        <div class="box contato">
+          <h4>Contato</h4>
+          <hr />
+          <h5>
+            <img
+              src="assets/imgs/header-footer/logo_whats.png"
+              alt="whats"
+            />(011)2534-1484
+          </h5>
+          <h5>
+            <img
+              src="assets/imgs/header-footer/logo_email.png"
+              alt="email"
+            />omnisuport@solution.com
+          </h5>
+        </div>
+        <!-- BOX DA OMNI SOLUTIONS -->
+        <div class="box">
+          <h2>OMNI Solution</h2>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+<script src="js/script.js"></script>
+<script>
+  function entrar() {
+  
+
+    var emailVar = email_input.value;
+    var senhaVar = senha_input.value;
+
+    if (emailVar == "" || senhaVar == "") {
+      cardErro.style.display = "flex";
+      mensagem_erro.innerHTML = "Preencha todos os campos para prosseguir!";
+      finalizarAguardar();
+      return false;
+    } else {
+      setInterval(sumirMensagem, 5000);
+    }
+
+    if (
+      emailVar.toLowerCase().indexOf("@omni") == -1 ||
+      emailVar.endsWith(".com") == -1
+    ) {
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "Ops, e-mail inválido! Verifique e tente novamente.";
+      finalizarAguardar();
+      return false;
+    } else {
+      setInterval(sumirMensagem, 5000);
+    }
+
+    console.log("FORM LOGIN: ", emailVar);
+    console.log("FORM SENHA: ", senhaVar);
+
+    fetch("/usuarios/autenticar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        emailServer: emailVar,
+        senhaServer: senhaVar,
+      }),
+    })
+      .then(function (resposta) {
+        console.log("ESTOU NO THEN DO entrar()!");
+
+        if (resposta.ok) {
+          console.log(resposta);
+
+          resposta.json().then((json) => {
+            console.log(json);
+            console.log(JSON.stringify(json));
+
+            sessionStorage.EMAIL_USUARIO = json.email;
+            sessionStorage.NOME_USUARIO = json.nome;
+            sessionStorage.ID_USUARIO = json.id;
+
+            setTimeout(function () {
+              window.location = "/unidades.html";
+            }, 1000); // apenas para exibir o loading
+          });
+        } else {
+          console.log("Houve um erro ao tentar realizar o login!");
+
+          resposta.text().then((texto) => {
+            console.error(texto);
+            finalizarAguardar(texto);
+          });
+        }
+      })
+      .catch(function (erro) {
+        console.log(erro);
+      });
+
+    return false;
+  }
+
+  function sumirMensagem() {
+    cardErro.style.display = "none";
+  }
+</script>

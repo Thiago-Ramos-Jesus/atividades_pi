@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="assets/imgs/header-footer/logo_imgWHITE.png" />
+    <link id="link_theme" rel="stylesheet" href="" />
+
+    <script src="./js/funcoes.js"></script>
+
+    <title>Cadastro | OMNI Têxtil</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <div class="container">
+        <a href="index.html" class="href-title">
+          <img
+            src="assets/imgs/header-footer/logo-OMNI_Textil.png"
+            alt="OMNI TÊXTIL"
+          />
+        </a>
+        <!-- ALTERAR A CLASSE EM DETERMINADAS PÁGINAS -->
+        <ul class="navbar-header">
+          <li class=""><a href="unidades.html">Unidades</a></li>
+          <hr />
+          <li class="page-selected"><a href="cadastro.html">Cadastro</a></li>
+          <hr />
+          <li class=""><a href="login.html">Sair</a></li>
+          <img
+            id="img_theme"
+            onclick="theme_change()"
+            src="assets/imgs/header-footer/sun_off.png"
+            title="Mudar tema"
+            alt="Sol do Tema"
+          />
+        </ul>
+      </div>
+    </div>
+
+    <!-- BANNER -->
+    <div class="banner banner-cadastro">
+      <div class="container">
+        <!-- CARD CADASTRO -->
+        <div class="card-input card-cadastro">
+          <h1>CADASTRO</h1>
+          <div class="alerta_erro">
+            <div class="card_erro" id="cardErro">
+              <span id="mensagem_erro"></span>
+            </div>
+          </div>
+          <div class="form-box form-cadastro">
+            <div class="form-input">
+              <p>Nome:</p>
+              <input type="text" id="nome_input" spellcheck="false" />
+            </div>
+            <div class="form-input">
+              <p>E-mail:</p>
+              <input type="email" id="email_input" spellcheck="false" />
+            </div>
+            <div class="form-input">
+              <p>Senha:</p>
+              <input type="password" id="senha_input" />
+            </div>
+
+            <div class="form-input">
+              <p>Confirmar Senha:</p>
+              <input type="password" id="confirmacao_senha_input" />
+            </div>
+            <div class="form-input form-select-p">
+              <p>Permissão:</p>
+              <select id="select_permissao" class="form-select">
+                <option value="VAZIO">-</option>
+                <option value="COMUM">Comum</option>
+                <option value="ADMIN">Administrador</option>
+              </select>
+            </div>
+          </div>
+          <button
+            onclick="cadastrar()"
+            class="form-button cadastro"
+            title="Cadastrar usuário"
+          >
+            Cadastrar
+          </button>
+          <div id="div_aguardar" class="loading-div">
+            <img src="./assets/circle-loading.gif" id="loading-gif" />
+          </div>
+        </div>
+        <!-- CARD MEMBROS -->
+        <div class="card-input card-membros" id="card_membros">
+          <h1>MEMBROS</h1>
+          <div class="div-membros">
+            <table class="table-membros" width="100%">
+              <!-- HEADER DA TABLE -->
+              <thead>
+                <tr>
+                  <th class="td-custom td-small td-title">ID</th>
+                  <th class="td-custom td-large td-title">NOME</th>
+                  <th class="td-custom td-large td-title">EMAIL</th>
+                  <th class="td-custom td-medium td-title">CARGO</th>
+                  <th class="td-custom td-medium td-title">DATA</th>
+                </tr>
+              </thead>
+              <!-- CORPO DA TABLE -->
+              <tbody id="table_membros">
+                <!-- INSERÇÃO DE NOVOS DADOS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <!-- BOX DE REPORT -->
+        <div class="box reports">
+          <img src="assets/imgs/header-footer/logo_lupa.png" alt="lupa" />
+          <p>
+            Feedbacks<br />
+            Reports
+          </p>
+        </div>
+        <!-- BOX DE CONTATO -->
+        <div class="box contato">
+          <h4>Contato</h4>
+          <hr />
+          <h5>
+            <img
+              src="assets/imgs/header-footer/logo_whats.png"
+              alt="whats"
+            />(011)2534-1484
+          </h5>
+          <h5>
+            <img
+              src="assets/imgs/header-footer/logo_email.png"
+              alt="email"
+            />omnisuport@solution.com
+          </h5>
+        </div>
+        <!-- BOX DA OMNI SOLUTIONS -->
+        <div class="box">
+          <h2>OMNI Solution</h2>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+<script src="js/script.js"></script>
+<script>
+  function cadastrar() {
+    aguardar();
+
+    var nomeVar = nome_input.value;
+    var emailVar = email_input.value;
+    var senhaVar = senha_input.value;
+    var confirmacaoSenhaVar = confirmacao_senha_input.value;
+    var permissaoVar = select_permissao.value;
+
+    if (
+      nomeVar == "" ||
+      emailVar == "" ||
+      senhaVar == "" ||
+      confirmacaoSenhaVar == "" ||
+      permissaoVar == ""
+    ) {
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML = "Preencha todos os campos para prosseguir!";
+
+      finalizarAguardar();
+      return false;
+    } else {
+      setInterval(sumirMensagem, 5000);
+    }
+
+    if (
+      emailVar.toLowerCase().indexOf("@omni") == -1 ||
+      emailVar.endsWith(".com") == -1
+    ) {
+      email_input.style.border = 'red 2px solid'
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "Ops, e-mail inválido! Verifique e tente novamente.";
+      finalizarAguardar();
+      return false;
+    } else {
+      setInterval(sumirMensagem, 5000);
+    }
+
+    if (senhaVar != confirmacaoSenhaVar) {
+      confirmacao_senha_input.style.border = 'red 2px solid'
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "As senhas inseridas devem ser iguais para prosseguir!";
+      finalizarAguardar();
+      return false;
+    }
+    if (permissaoVar == 'VAZIO'){
+      select_permissao.style.border = 'red 2px solid'
+      cardErro.style.display = "block";
+      mensagem_erro.innerHTML =
+        "Se deve escolher uma Permissão pra prosseguir!";
+      finalizarAguardar();
+      return false;
+    } else {
+      setInterval(sumirMensagem, 5000);
+    }
+
+    fetch("/usuarios/cadastrar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nomeServer: nomeVar,
+        emailServer: emailVar,
+        senhaServer: senhaVar,
+        permissaoServer: permissaoVar,
+      }),
+    })
+      .then(function (resposta) {
+        console.log("resposta: ", resposta);
+
+        if (resposta.ok) {
+          cardErro.style.display = "block";
+          mensagem_erro.innerHTML = "Cadastro realizado com sucesso!"
+          limparFormulario();
+          finalizarAguardar();
+        } else {
+          throw "Houve um erro ao tentar realizar o cadastro!";
+        }
+      })
+      .catch(function (resposta) {
+        console.log(`#ERRO: ${resposta}`);
+        finalizarAguardar();
+      });
+
+    return false;
+  }
+
+  function sumirMensagem() {
+    cardErro.style.display = "none";
+  }
+</script>
